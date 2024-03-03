@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Forward!</title>
+     <!-- <link href="styles.css" rel="stylesheet"/> -->
+     <!-- <script src="frompaste.js" defer></script> -->
+</head>
+<body>
+
+    <!-- <div id="grid">  -->
+    <!--     <div id="imageContainer" contenteditable="True"></div> -->
+    <!--     <div id="result"></div> -->
+    <!-- </div> -->
+
+    <form method="POST" id="forward">
+      <input  type="text" name="firstname"/>
+      <button type="submit">Confirm</button>
+    </form>
+
+
+
+
+
+<script>
+  
+const form = document.getElementById("forward");
+
+async function  fwrd(e){
+  e.preventDefault()
+  // requestSubmit
+  try{
+  await fetch('http://localhost:3000/upload', {
+        method: 'POST',
+        body: new URLSearchParams({firstname: e.target.firstname.value}),
+        headers: {"Content-Type":"application/x-www-form-urlencoded"} // Important: Omit 'Content-Type' header to let Spring handle it
+      // await fetch(hostedFrom+'/roster', {method: "POST", headers: {"Content-Type":"application/x-www-form-urlencoded"}, body: new URLSearchParams(state.userInput)})
+
+    });
+  }
+  catch(err){console.error(err)}
+}
+
+form.addEventListener("submit", fwrd)
+// const imageContainer = document.getElementById('imageContainer');
+// const resultDiv      = document.getElementById('result');
+
+
+// imageContainer.addEventListener('paste', async (event) => {
+//   resultDiv.innerText = "Please wait..."
+//   const item     = event.clipboardData.items[0];
+//   if (event.clipboardData.items[0].type.indexOf('image') == -1) {
+//       resultDiv.innerText = 'Not an image!'
+//       return
+//       }
+//   try
+//       {
+//           const blob     = item.getAsFile();
+//
+//           const formData = new FormData();
+//           formData.append('file', blob);
+//
+//           const response = await fetch('/upload', {
+//               method: 'POST',
+//               body: formData,
+//               headers: {}, // Important: Omit 'Content-Type' header to let Spring handle it
+//           });
+//
+//           if (response.ok) {
+//               const text = await response.text();
+//               resultDiv.innerText = text;
+//           } else {
+//               resultDiv.innerText = 'Error uploading the file.';
+//           }
+//       }
+//   catch (error)
+//       {
+//           resultDiv.innerText = 'An error occurred: ' + error.message;
+//       }
+//   });
+
+
+
+
+
+    </script>
+
+</body>
+</html>
+
