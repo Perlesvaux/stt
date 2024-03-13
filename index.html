@@ -34,8 +34,9 @@
     <form 
       id="stt_form"
       enctype="multipart/form-data"
-      method="POST"
-      action="http://localhost:3000/stt" >
+      >
+      <!-- method="POST" -->
+      <!-- action='http://localhost:3000/stt' -->
 
       <div class="mb-3">
 
@@ -112,34 +113,41 @@
 
 
 <!-- Approach below uses fetch API instead  -->
-<!-- <script> -->
-<!--    -->
-<!--   const stt_form = document.getElementById("stt_form"); -->
-<!---->
-<!--   async function sendFile(e){ -->
-<!--     e.preventDefault() -->
-<!--     try{ -->
-<!---->
-<!--       const item = e.target.sendfile.files[0] -->
-<!--       console.log(item) -->
-<!--       const fd = new FormData() -->
-<!--        -->
-<!--       fd.append('sendfile', item) -->
-<!--        -->
-<!--      await fetch('http://localhost:3000/sendfile', { -->
-<!--         method: 'POST', -->
-<!--         body: fd, -->
-<!--         headers: {},  -->
-<!--     }); -->
-<!---->
-<!--     }catch(err){ -->
-<!--       console.error(err) -->
-<!--     } -->
-<!--   } -->
-<!---->
-<!--   stt_form.addEventListener("submit", sendFile) -->
-<!---->
-<!-- </script> -->
+<script>
+  
+  const stt_form = document.getElementById("stt_form");
+
+  async function sendFile(e){
+    e.preventDefault()
+    try{
+
+      // Creating FormData out of user input 
+      const item = e.target.sendfile.files[0]
+      const fd = new FormData()
+      fd.append('sendfile', item)
+      
+      const response = await fetch('http://localhost:3000/stt', {
+        method: 'POST',
+        body: fd,
+      });
+
+      // Take the blob out of the response  
+      // create an <a> element, assign the blob to its href 
+      // assign a name to the file and simulate a click
+      const blob = await response.blob();
+      const link = document.createElement('a');
+      link.href = window.URL.createObjectURL(blob);
+      link.download = `${item.name.split(".").slice(0,-1).join(".")}.txt`;
+      link.click();
+
+    }catch(err){
+      console.error(err)
+    }
+  }
+
+  stt_form.addEventListener("submit", sendFile)
+
+</script>
 
 </body>
 </html>
