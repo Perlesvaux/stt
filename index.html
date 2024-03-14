@@ -209,35 +209,41 @@
   e.preventDefault();
   try {
     const item = e.target.sendfile.files[0];
-    const fileSize = item.size; // Get file size in bytes
 
     const fd = new FormData();
     fd.append('sendfile', item);
 
     const req = new XMLHttpRequest();
+    req.responseType = 'blob';
+
 
     req.upload.addEventListener('progress', function (e) {
       if (e.lengthComputable) {
-        const percentComplete = (e.loaded / e.total) * 50;
+        const percentComplete = (e.loaded / e.total) * 70;
         bar.style.width = percentComplete + "%";
-
-        // Estimate remaining time
-        const remainingBytes = fileSize - e.loaded;
-        const uploadSpeed = e.loaded / (e.timeStamp / 1000); // Bytes per second
-        const estimatedTime = remainingBytes / uploadSpeed; // Seconds
-
-        console.log("Estimated time remaining: " + estimatedTime.toFixed(2) + " seconds");
       }
     });
 
-    req.addEventListener('load', function () {
-      console.log(req.status);
+    req.addEventListener('loadend', function () {
       console.log(req.response);
       bar.style.width = 100 + "%";
+    const link = document.createElement('a');
+    link.href = window.URL.createObjectURL(req.response);
+    link.download = `${item.name.split(".").slice(0,-1).join(".")}.txt`;
+    link.click();
     });
+
+
 
     req.open("POST", 'http://localhost:3000/stt');
     req.send(fd);
+
+
+    // const blob =  req.response.blob();
+    // const link = document.createElement('a');
+    // link.href = window.URL.createObjectURL(blob);
+    // link.download = `${item.name.split(".").slice(0,-1).join(".")}.txt`;
+    // link.click();
 
   } catch (err) {
     console.error(err);
