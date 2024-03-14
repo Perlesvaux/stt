@@ -104,6 +104,10 @@
   </div>
   </div>
 
+<div class="progress">
+  <div id="bar" class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;"></div>
+</div>
+
   <!--     <div class="custom-file"> -->
   <!--   <input type="file" class="custom-file-input" id="customFile" hidden> -->
   <!--   <label class="custom-file-label" for="customFile"> -->
@@ -116,34 +120,129 @@
 <script>
   
   const stt_form = document.getElementById("stt_form");
+  const bar = document.getElementById("bar");
 
-  async function sendFile(e){
-    e.preventDefault()
-    try{
+  //  function sendFile(e){
+  //   e.preventDefault()
+  //   try{
+  //
+  //     // Creating FormData out of user input 
+  //     const item = e.target.sendfile.files[0]
+  //     const fd = new FormData()
+  //     fd.append('sendfile', item)
+  //
+  //     const req = new XMLHttpRequest();
+  //
+  //     req.open("POST", 'http://localhost:3000/stt');
+  //     console.log(req.readyState)
+  //     req.upload.addEventListener('progress', function(e){
+  //       const percentComplete = (e.loaded/e.total)*100
+  //       console.log(percentComplete)
+  //       bar.setAttribute('width', percentComplete);
+  //       
+  //     })
+  //
+  //     req.addEventListener('load', function(){
+  //       console.log(req.status)
+  //       console.log(req.response)
+  //
+  //       req.send(fd)
+  //     })
+  //
+  //
+  //
+  //
+  //
+  //     
+  //     // const response = await fetch('http://localhost:3000/stt', {
+  //     //   method: 'POST',
+  //     //   body: fd,
+  //     // });
+  //
+  //     // Take the blob out of the response  
+  //     // create an <a> element, assign the blob to its href 
+  //     // assign a name to the file and simulate a click
+  //
+  //
+  //     // const blob = await response.blob();
+  //     // const link = document.createElement('a');
+  //     // link.href = window.URL.createObjectURL(blob);
+  //     // link.download = `${item.name.split(".").slice(0,-1).join(".")}.txt`;
+  //     // link.click();
+  //
+  //   }catch(err){
+  //     console.error(err)
+  //   }
+  // }
 
-      // Creating FormData out of user input 
-      const item = e.target.sendfile.files[0]
-      const fd = new FormData()
-      fd.append('sendfile', item)
-      
-      const response = await fetch('http://localhost:3000/stt', {
-        method: 'POST',
-        body: fd,
-      });
 
-      // Take the blob out of the response  
-      // create an <a> element, assign the blob to its href 
-      // assign a name to the file and simulate a click
-      const blob = await response.blob();
-      const link = document.createElement('a');
-      link.href = window.URL.createObjectURL(blob);
-      link.download = `${item.name.split(".").slice(0,-1).join(".")}.txt`;
-      link.click();
+// function sendFile(e) {
+//   e.preventDefault();
+//   try {
+//     const item = e.target.sendfile.files[0];
+//     const fd = new FormData();
+//     fd.append('sendfile', item);
+//
+//     const req = new XMLHttpRequest();
+//
+//     req.upload.addEventListener('progress', function (e) {
+//       if (e.lengthComputable) {
+//         const percentComplete = (e.loaded / e.total) * 100;
+//         bar.style.width = percentComplete + "%";
+//       }
+//     });
+//
+//     req.addEventListener('load', function () {
+//       console.log(req.status);
+//       console.log(req.response);
+//     });
+//
+//     req.open("POST", 'http://localhost:3000/stt');
+//     req.send(fd);
+//   } catch (err) {
+//     console.error(err);
+//   }
+// }
 
-    }catch(err){
-      console.error(err)
-    }
+
+  function sendFile(e) {
+  e.preventDefault();
+  try {
+    const item = e.target.sendfile.files[0];
+    const fileSize = item.size; // Get file size in bytes
+
+    const fd = new FormData();
+    fd.append('sendfile', item);
+
+    const req = new XMLHttpRequest();
+
+    req.upload.addEventListener('progress', function (e) {
+      if (e.lengthComputable) {
+        const percentComplete = (e.loaded / e.total) * 50;
+        bar.style.width = percentComplete + "%";
+
+        // Estimate remaining time
+        const remainingBytes = fileSize - e.loaded;
+        const uploadSpeed = e.loaded / (e.timeStamp / 1000); // Bytes per second
+        const estimatedTime = remainingBytes / uploadSpeed; // Seconds
+
+        console.log("Estimated time remaining: " + estimatedTime.toFixed(2) + " seconds");
+      }
+    });
+
+    req.addEventListener('load', function () {
+      console.log(req.status);
+      console.log(req.response);
+      bar.style.width = 100 + "%";
+    });
+
+    req.open("POST", 'http://localhost:3000/stt');
+    req.send(fd);
+
+  } catch (err) {
+    console.error(err);
   }
+}
 
   stt_form.addEventListener("submit", sendFile)
 
