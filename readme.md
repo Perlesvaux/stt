@@ -21,4 +21,4 @@
 - Install the [S2T](https://github.com/Perlesvaux/s2t)
 - Initialize the server  
 
-App is now ready. [Click here](perlesvaux.github.io/stt/)
+App is now ready. [Click here](https://perlesvaux.github.io/stt/)
